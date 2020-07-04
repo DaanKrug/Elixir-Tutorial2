@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pt-BR">
+    <head>
+    	<meta http-equiv="Cache-Control" content="public, max-age=86400" />
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <base href=".">
+        <meta name="app-id" content="ex_cipher" />
+        <meta name="app-prefix" content="" />
+        <title>Elixir Cipher</title>
+    </head>
+    <body style="margin: 0; padding: 0;">
+    	<div id="mainframe" style="display: none;">
+    		<link href="./ex_cipher/bootstrap/bootstrap.min.css" rel="stylesheet"/>
+            <link href="./ex_cipher/custom.min.css" rel="stylesheet"/>
+            <link href="./ex_cipher/fontawesome-5.11/css/all.min.css" rel="stylesheet"/>
+            <link href="./ex_cipher/themes/dark03.min.css" rel="stylesheet" />
+        	<app-root></app-root>
+        	<script src="./ex_cipher/angular/runtime-es2015.js" defer></script>
+            <script src="./ex_cipher/angular/polyfills-es2015.js" defer></script>
+            <script src="./ex_cipher/angular/main-es2015.js" type="module" defer></script>
+    	</div>
+    	<div id="loadingDiv" 
+    	     style="position: absolute; z-index: 1000; background: #fff; width: 100%; height: 100vh; border: 0;">
+    		<header>
+    			<div style="height: 2.5em;"></div>
+    		</header>
+    		<main>
+        		<div style="align-items: center; display: flex; justify-content: center; position: relative;">
+            		<div style="text-align: center; padding: 3.5rem; color: #aaa;">
+            			<div style="font-size: 4em; font-weight: 700;">&nbsp;</div>
+            			<div style="font-size: 1.3em; font-weight: 500;">
+            				<br/>Aguarde o carregamento da Aplicação ...
+            			</div>
+            		</div>
+            	</div>
+        	</main>
+    	</div>
+    	<script>
+        	var url = window.location.href;
+        	var appId = document.querySelector('meta[name="app-id"]').content;
+        	function genToken(){
+        		var tk = '';
+        		var word = 'abcdefghijklmnopqrstuvxwyzABCDEFGHIJKLMNOPQRSTUVXWYZ01234567899';
+        		while(tk.length < 248){
+        			var i = Math.floor(Math.random() * (word.length - 1));
+        			tk += word.charAt(i);
+        		}
+        		return tk;
+        	}
+       	    function setStorage(){
+           	    var arr = url.split('//');
+           	    sessionStorage.removeItem('_ownerId_' + appId);
+           	    sessionStorage.setItem('_token_' + appId,genToken());
+           	    sessionStorage.setItem('_doc_base_' + appId,arr[0] + '//' + arr[1].split('/')[0]);
+           	    sessionStorage.setItem('_lastActivity_' + appId,new Date().getTime());
+       	    }
+           	setStorage();
+			setTimeout(() => {
+				document.getElementById('loadingDiv').style.display = 'none';
+         		document.getElementById('mainframe').style.display = 'block';
+           	},200);
+    	</script>
+    </body>
+</html>

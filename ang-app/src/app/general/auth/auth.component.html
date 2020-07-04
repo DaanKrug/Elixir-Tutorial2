@@ -1,0 +1,187 @@
+<div *ngIf="!logged" class="btn-group" ngbDropdown role="group" aria-label="Ações de login">
+    <button class="btn btn-outline-info" ngbDropdownToggle 
+            style="min-width: 5em; padding: 0 .5em 0 0; text-align: right;" tabIndex="0">
+    	Login
+    </button>
+    <div class="dropdown-menu" ngbDropdownMenu>
+    	<button class="dropdown-item" (click)="login(loggin)" tabIndex="0">Efetuar Login</button>
+    	<button class="dropdown-item" (click)="register(registerMe)" tabIndex="0">Registre-se</button>
+    </div>
+</div>
+
+<div *ngIf="logged" class="btn-group" ngbDropdown role="group" aria-label="Ações do usuário logado">
+    <button class="btn btn-outline-info" ngbDropdownToggle 
+            style="min-width: 10em; padding: 0 .5em 0 0; text-align: right;" tabIndex="0">
+    	{{ logged.name }}
+    </button>
+    <div class="dropdown-menu" ngbDropdownMenu>
+    	<button class="dropdown-item" (click)="logout()" tabIndex="0">Efetuar Logout</button>
+    	<button class="dropdown-item" (click)="changeMyPassword(passwordChange)" tabIndex="0">Trocar Senha</button>
+    </div>
+</div>
+
+<ng-template #loggin let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Efetuar Login</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+  	<form [formGroup]="loginForm" (ngSubmit)="onLoginFormSubmit()" class="dataForm">   	
+        <div class="form">
+        	<div>
+            	<div>
+            		<label for="email">Login</label><br/>
+            		<input id="email" type="email" style="width: 98%;" max-length="100"
+            		       autocomplete="off"
+            		       formControlName="email" class="form-control" />
+            	</div>
+            	<div *ngIf="!lostPassword">
+            		<label for="password">Senha</label><br/>
+            		<input id="password" type="password" style="width: 98%;" max-length="100"
+            		       autocomplete="off"
+            		       formControlName="password" class="form-control" />
+            	</div>
+            	<div *ngIf="null != loginConfirmation && !lostPassword">
+            		<label for="confirmation_code">Código de Confirmação</label><br/>
+            		<input id="confirmation_code" type="text" style="width: 98%;" max-length="20"
+            		       autocomplete="off"
+            		       formControlName="confirmation_code" class="form-control" />
+            	</div>
+        	</div>
+        	<captcha (captchaOkEmitter)="setCaptchaOk($event)" [hidde]="tryTimes < 1"></captcha>
+        	<div style="margin-top: 0.3rem;">
+				<div *ngIf="validationMessages && processValidation" aria-label="mensagens de validação do formulário">
+					  <div *ngFor="let msg of validationMessages" class="alert alert-danger">
+					  	<i class="fas fa-exclamation-triangle"></i>
+					  	<span [innerHtml]="msg"></span>
+					  </div>
+				</div>
+        	</div>
+        </div>
+        <div class="buttons clear">
+        	<button class="btn btn-primary clickable" style="padding: 0.3em;" *ngIf="lostPassword" (click)="iLostPassword(false)">
+        		<i class="fas fa-arrow-left"></i>
+        		Voltar
+        	</button> 
+            <button class="btn btn-primary clickable" style="padding: 0.3em;" *ngIf="lostPassword" >
+            	<i class="fas fa-check"></i>
+            	Recuperar Senha
+            </button> 
+            <button class="btn btn-link" style="padding: 0.3em;" (click)="iLostPassword(true)" *ngIf="!lostPassword">
+            	<i class="fas fa-at"></i>
+            	Esqueci a Senha
+            </button>
+            <button class="btn btn-primary clickable" *ngIf="!lostPassword" tabindex="0">
+            	<i class="fas fa-check"></i>
+            	Login
+            </button>  
+        </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #registerMe let-modal>
+	<div class="modal-header">
+	    <h4 class="modal-title" id="modal-basic-title">Registrar-me</h4>
+	    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+	      <span aria-hidden="true">&times;</span>
+	    </button>
+	</div>
+	<div class="modal-body">
+		<form [formGroup]="dataForm" (ngSubmit)="onObjectFormSubmit()" class="dataForm"> 
+	        <div class="form">
+	           	<div class="field" style="width: 49%;">
+	           		<label for="name">Nome (*)</label><br/>
+	           		<input id="name" type="text" style="width: 100%;" max-length="30"
+	           		       autocomplete="off" #sinputName
+	           		       (change)="adjustInputTextValueAfterChange('name',sinputName.value,30)"
+	           		       (key)="adjustInputTextValueAfterChange('name',sinputName.value,30)"
+	           		       formControlName="name" class="form-control"/>
+	           	</div>
+	           	<div class="field" style="width: 49%;">
+	           		<label for="email">E-mail (*)</label><br/>
+	           		<input id="email" type="email" style="width: 100%;" max-length="100"
+	           		       autocomplete="off" #sinputEmail 
+	           		       (change)="adjustInputTextValueAfterChange('email',sinputEmail.value,100)"
+	           		       (key)="adjustInputTextValueAfterChange('email',sinputEmail.value,100)"
+	           		       formControlName="email" class="form-control"/>
+	           	</div>
+	           	<div class="field" style="width: 49%;">
+	           		<label for="password">Senha (*)</label><br/>
+	           		<input id="password" type="password" style="width: 100%;" max-length="100"
+			           	   autocomplete="off" #sinputPasswordReg 
+			           	   (change)="validatePasswordForce(sinputPasswordReg.value)"
+			           	   (keyup)="validatePasswordForce(sinputPasswordReg.value)"
+			           	   formControlName="password" class="form-control"/>
+	           	</div>
+	           	<div class="field" style="width: 49%;">
+	           		<label for="re_password">Confirmação da Senha (*)</label><br/>
+	           		<input id="re_password" type="password" style="width: 100%;" max-length="100"
+	           		       autocomplete="off"
+	           		       formControlName="re_password" class="form-control"/>
+	           	</div>
+	           	<div class="field fieldset" style="width: 99%; margin: .4em 0;">
+	           		<div class="field" style="width: 5%;">
+            			<input id="acceptTerms" type="checkbox" formControlName="acceptTerms" />
+            		</div>
+            		<div class="field label" style="width: 92%;">
+            			<label for="acceptTerms" style="cursor: pointer; font-size: .9em; text-align: justify;">
+            				Eu declaro que li na íntegra, concordo e aceito todos os termos descritos
+            				nos tópicos: <strong>Políticas de Preços</strong>, 
+            				<strong>Termos de Uso</strong>, <strong>Política de Privacidade</strong> e
+            				<strong>Contrato de Cliente</strong> (conforme apresente-se 1 ou mais destes).
+            			</label>
+            		</div>
+	           	</div>
+	           	<captcha (captchaOkEmitter)="setCaptchaOk($event)"></captcha>
+	           	<div class="clear"></div>
+	       	</div>
+            <form-action [validationMessages]="validationMessages" [processValidation]="processValidation"
+                         (cancelDataEmitter)="cancelData()" [passwordValidationMessage]="passwordValidationMessage"
+                         saveText="Registrar-me">
+            </form-action>
+    	</form>
+    </div>
+</ng-template>
+
+<ng-template #passwordChange let-modal>
+	<div class="modal-header">
+	    <h4 class="modal-title" id="modal-basic-title">Trocar minha senha</h4>
+	    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+	      <span aria-hidden="true">&times;</span>
+	    </button>
+	</div>
+	<div class="modal-body">
+		<form [formGroup]="changePasswordForm" (ngSubmit)="onChangePasswordFormSubmit()" class="dataForm"> 
+	        <div>
+	           	<div class="field" style="width: 25%;">
+	           		<label for="password">Senha Atual (*)</label><br/>
+	           		<input id="password" type="password" style="width: width: 100%;" max-length="100"
+	           		       autocomplete="off"
+	           		       formControlName="password" class="form-control"/>
+	           	</div>
+	           	<div class="field" style="width: 25%;">
+	           		<label for="new_password">Nova Senha (*)</label><br/>
+	           		<input id="new_password" type="password" style="width: width: 100%;" max-length="100"
+	           			   autocomplete="off" #sinputPasswordNew 
+	           			   (change)="validatePasswordForce(sinputPasswordNew.value)"
+	           			   (keyup)="validatePasswordForce(sinputPasswordNew.value)"
+	           		       formControlName="new_password" class="form-control"/>
+	           	</div>
+	           	<div class="field" style="width: 47%;">
+	           		<label for="re_new_password">Confirmação Nova Senha (*)</label><br/>
+	           		<input id="re_new_password" type="password" style="width: width: 100%;" max-length="100"
+	           		       autocomplete="off"
+	           		       formControlName="re_new_password" class="form-control"/>
+	           	</div>
+	           	<div class="clear"></div>
+	       	</div>
+	        <form-action [validationMessages]="validationMessages" [processValidation]="processValidation"
+                         (cancelDataEmitter)="cancelData()" [passwordValidationMessage]="passwordValidationMessage"
+                         saveText="Trocar Senha">
+            </form-action>
+       	 </form>
+    </div>
+</ng-template>

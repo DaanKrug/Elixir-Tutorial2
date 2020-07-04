@@ -1,0 +1,126 @@
+<div *ngIf="statusMessages" class="msgPanel" aria-label="mensagens e alertas">
+	<div *ngFor="let msg of statusMessages">
+		<ngb-alert type="{{msg.type}}" (close)="statusCode = null">
+		  	<i class="{{msg.clazz}}"></i>
+		  	<span [innerHtml]="msg.msgg"></span>
+		</ngb-alert>
+	</div>
+</div>
+<div class="clear"></div>
+
+<ngx-spinner bdColor="rgba(77, 119, 123, 0.6)"
+		     size="medium"
+			 color="#fff"
+		     type="ball-spin-clockwise"
+			 fullScreen="true">
+	<p style="font-family: verdana; font-size: 1.4em; color: #fff;" 
+	   aria-label="Tela de bloqueio ativada, aguarde finalizar a execução."> Carregando ... </p>
+</ngx-spinner>
+
+<header>
+	<div class="header noPrint">
+		<div class="top-left">
+			<div class="field menuTop" *ngIf="logged">
+				<button class="btn btn-link" (click)="showHideTopMenu()" tabIndex="0"
+				        placement="right" aria-label="Clique para expandir/ocultar o menu"
+	            		ngbTooltip="Clique para expandir/ocultar o menu">
+					<i class="far fa-plus-square" *ngIf="!showMenuOnTop"></i>
+			        <i class="far fa-minus-square" *ngIf="showMenuOnTop"></i>
+			        <i class="fas fa-bars" style="margin-left: 0.1em;"></i>
+				</button>
+			</div>
+			<a *ngIf="logged" (click)="homeView();" tabIndex="0" class="btn-group dropdown">Início</a>
+		</div>
+	    <div class="top-right">
+	    	<auth-root></auth-root>
+	    </div>
+	    <div style="clear: both;"></div>
+	    <div *ngIf="logged && showMenuOnTop 
+	                && ['admin_master','admin','system_auditor'].includes(logged.category)" 
+	         class="subHeaderMenuTop">
+	    	<div class="field">
+		    	<div class="field">
+		    		<div class="btn-group" ngbDropdown role="group" aria-label="Gerenciar" #drd3="ngbDropdown">
+					    <button class="btn btn-outline-info" ngbDropdownToggle
+					            style="min-width: 5em; padding: 0; margin-left: 0.5em;" tabIndex="0">
+					    	Gerenciar
+					    </button>
+					    <div class="dropdown-menu" ngbDropdownMenu>
+					    	<button (click)="usersView(); drd3.close();" tabIndex="0" 
+					    	        class="dropdown-item {{ view == 'users' ? 'active' : ''}}"
+					    	        *ngIf="(['admin_master'].includes(logged.category) 
+					    	                 || (['admin','system_auditor'].includes(logged.category)
+					    	                    && permissions.includes('user')))">
+					    		Pessoas / Usuários
+					    	</button>
+					    </div>
+					</div>
+		    	</div>
+		    	<div style="clear: both;"></div>
+	    	</div>
+	    	<div style="clear: both;"></div>
+	    </div>
+	</div>
+</header>
+
+<div *ngIf="logged && showMenuOnTop" class="clear"></div>
+
+<div *ngIf="logged && ['admin_master','admin','system_auditor'].includes(logged.category)" 
+     class="{{ logged ? 'container': 'none' }}" style="margin-top: .3rem !important;">
+    <div class="row justify-content-center">
+		<div class="col-md-2 noPrint menuLeft" style="padding: 0em 0.3em;">
+			<nav aria-label="Navegação principal do usuário logado">
+			    <div class="card">
+			        <div class="card-header header" tabIndex="0">
+			        	Gerenciar
+			        </div>
+			        <div class="card-body">
+				        <div class="list-group">
+					    	<button (click)="usersView()" tabIndex="0" 
+					    	        class="list-group-item list-group-item-action {{ view == 'users' ? 'active' : ''}}"
+					    	        *ngIf="(['admin_master'].includes(logged.category) 
+					    	                 || (['admin','system_auditor'].includes(logged.category)
+					    	                    && permissions.includes('user')))">
+					    		Pessoas / Usuários
+					    	</button>
+						</div>
+					</div>
+			    </div>
+			</nav>
+		</div>
+		<div class="col-md-10" style="padding: 0em 0.3em;">
+			<main>
+			    <div class="{{ viewTitle ? 'card' : 'none' }}">
+			        <div class="card-header noPrint" [innerHtml]="viewTitle"></div>
+			        <div class="card-body">
+			        	<router-outlet></router-outlet>
+			        </div>
+			    </div>
+			</main>
+		</div>
+	</div>
+</div>
+
+<div *ngIf="logged && !(['admin_master','admin','system_auditor'].includes(logged.category))" 
+     class="{{ logged ? 'container': 'none' }}" style="margin-top: .3rem !important;">
+     <h1>Wellcommind !!</h1>
+     <h3>Você está logado sem permissões administrativas</h3>
+</div>
+
+<div style="z-index: 1050" aria-hidden="true" class="modal-backdrop fade show" *ngIf="informationMessage"></div>
+<div role="dialog" tabindex="-1" class="modal fade show d-block" 
+                  aria-modal="true" aria-labelledby="modal-basic-title" *ngIf="informationMessage">
+	<div role="document" class="modal-dialog modal-lg modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="modal-basic-title">{{informationMessage.header}}</h4>
+				<button aria-label="Close" class="close" type="button" (click)="informationMessage = null;">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+			  	<div [innerHtml]="informationMessage.content"></div>
+			</div>
+		</div>
+	</div>
+</div>

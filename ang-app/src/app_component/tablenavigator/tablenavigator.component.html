@@ -1,0 +1,25 @@
+<nav>
+  <ul class="pagination">
+    <li class="page-item {{previousPageDisabled ? 'disabled' : ''}}">
+    	<a class="page-link" aria-label="Anterior: Páginas anteriores da lista"
+    	   href="javascript:void(0);"
+    	   (click)="previousPage()">Anterior</a>
+    </li>
+    <li *ngFor="let page of pages" class="page-item {{page==selectedPage? 'active' : ''}}">
+    	<a class="page-link" href="javascript:void(0);" 
+    	   (click)="setPage(page)">{{page}}</a>
+    </li>
+    <li class="page-item {{nextPageDisabled ? 'disabled' : ''}}">
+    	<a class="page-link" aria-label="Próximo: Próximas páginas da lista"
+    	   href="javascript:void(0);"
+    	   (click)="nextPage()">Próximo</a>
+    </li>
+  </ul>
+  <div style="font-weight: 500;">
+  	Registros por página:&nbsp;&nbsp;<strong>{{ rowsPerPage }}</strong>
+  	&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  	Total de Páginas:&nbsp;&nbsp;<strong>{{ totalPages }}</strong>
+  	&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  	Total de Registros:&nbsp;&nbsp;<strong>{{ totalRows }}</strong>
+  </div>
+</nav>

@@ -1,0 +1,20 @@
+<div *ngIf="!hidde">
+	<div class="clear" style="margin-top: .4em;"></div>
+	<div class="field fieldset" style="width: 99%; padding-top: .3em; margin-bottom: 0;">
+		<input id="iamnotrobot_{{id}}" type="checkbox" (click)="generateCaptcha(true)" *ngIf="null==captcha" />
+		<input id="iamnotrobot_{{id}}" type="checkbox" checked="checked" (click)="generateCaptcha(false)" *ngIf="null!=captcha" />
+		<label class="clickable" for="iamnotrobot_{{id}}" style="margin-left: .3em; font-size: .9em;">
+			Eu não sou um robô, tenho certeza.
+		</label>
+	</div>
+	<div class="field" style="width: 49%;">
+		<label for="captcha_{{id}}">Captcha</label><br/>
+		<div id="captcha_{{id}}" class="form-control disabled">{{ captcha }}</div>
+	</div>
+	<div class="field" style="width: 49%;">
+		<label for="reCaptcha_{{id}}">Digite o Captcha (*)</label><br/>
+		<input id="reCaptcha_{{id}}" type="text" style="width: 100%;" maxlength="8" class="form-control"
+		       (keyup)="onkeyup($event)" (change)="onkeyup($event)" />
+	</div>
+	<div class="clear"></div>
+</div>

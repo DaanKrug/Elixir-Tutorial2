@@ -1,0 +1,31 @@
+This project is a short tutorial to demonstrate how to make
+a Elixir App whithout use of Phoenix Framework.
+You can follow step by step the process of creation of this project
+if you see the "elixir_cloud.pptx" file.
+
+This project and the .pptx file was created to be submitted to a
+tecnical conference, because this some things will could be bit
+strange on this context.
+
+Basically I explore the concepts of a REST-Like application, and
+how to it whit elixir. These type of information until now is very
+fragmented in the Web. 
+Other concept not easy to find how to that is presented is concurrent programming. 
+
+
+Organization:
+
+- elixir_cloud.pptx: Presentation file.
+- ex_cipher: Root folder of Elixir Application. This is core of all.
+- ang-app: Root folder for an Angular 9 Application. This is an auxiliar app
+  created for demonstrate more user friendly the communication whit the 
+  Elixir Application. (You can create yourself UI application to comunicate
+  whit this Elixir Application whit any language, this is one of advantages
+  of use Elixir whithout Phoenix Framework).
+  In case you want run Angular app, you will need install the "node_modules"
+  folder in your IDE. (Suggestion: Create a new Angular app, and replace the "src"
+  folder and the other angular files whit these in ang-app).
+- sql-files: Folder contain sql scripts to create tables used in this project.
+  for this project was used MariaDB/MySQL. You could try use other databases
+  however it will require some libraries especific to each respective 
+  database engine.

@@ -1,0 +1,65 @@
+<ng-template #deletionHeaderTitle>
+	<span *ngIf="!redo && !info">
+		Confirmar exclusão <span *ngIf="auditingExclusions">[PERMANENTE] </span>
+    	de <span style="text-transform: capitalize;">{{ label.toLowerCase() }}</span>
+	</span>
+	<span *ngIf="redo">
+		Confirmar DESFAZER a exclusão de <span style="text-transform: capitalize;">{{ label.toLowerCase() }}</span>
+	</span>
+	<span *ngIf="info">
+		Detalhes <span style="text-transform: capitalize;">{{ label.toLowerCase() }}</span>
+	</span>
+</ng-template>
+<ng-template #deletionHeaderQuestion>
+    <span *ngIf="!redo">
+    	Confirma a exclusão <span *ngIf="auditingExclusions">[PERMANENTE] </span>
+		de {{ label.toLowerCase() }} abaixo?
+    </span>
+    <span *ngIf="redo">
+    	Confirma DESFAZER a exclusão de {{ label.toLowerCase() }} abaixo?
+    </span>
+</ng-template>
+<ng-template #deletionHeaderColspan2>
+	<th scope="col" colspan="2">
+		<ng-template [ngTemplateOutlet]="deletionHeaderQuestion"></ng-template>			
+	</th>
+</ng-template>
+<ng-template #deletionHeaderColspan4>
+	<th scope="col" colspan="4">
+		<ng-template [ngTemplateOutlet]="deletionHeaderQuestion"></ng-template>			
+	</th>
+</ng-template>
+<div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">
+    	<ng-template [ngTemplateOutlet]="deletionHeaderTitle"></ng-template>
+    </h4>
+    <button type="button" class="close" aria-label="Fechar" (click)="cancelData()" *ngIf="info">
+		<span aria-hidden="true">&times;</span>
+	</button>
+</div>
+<div class="modal-body">
+  	<table class="table tableInfo">
+  		<thead *ngIf="!info">
+  			<tr>
+  				<ng-template [ngTemplateOutlet]="deletionHeaderColspan2" *ngIf="colspan == 2"></ng-template>
+  				<ng-template [ngTemplateOutlet]="deletionHeaderColspan4" *ngIf="colspan == 4"></ng-template>
+  			</tr>
+  		</thead>
+  		<tbody>
+  			<ng-template [ngTemplateOutlet]="templateOutlet"></ng-template>
+  		</tbody>
+  	</table>
+</div>
+<div class="modal-footer" *ngIf="!info">
+   	<div class="buttons clear"> 
+      	<button class="btn btn-primary clickable" (click)="cancelData(); confirmDeleteObject(selectedObject.id);">
+      		<i class="fas fa-ban"></i> Cancelar
+      	</button>
+ 		<button class="btn btn-primary clickable" (click)="confirmDeleteObject(selectedObject.id);">
+ 			<i class="far fa-trash-alt" *ngIf="!redo"></i> 
+ 			<i class="fas fa-undo-alt"  *ngIf="redo"></i>
+ 			Confirmar <span *ngIf="redo">Desfazer</span> Exclusão 
+ 			<span *ngIf="!redo && auditingExclusions">[PERMANENTE]</span>
+ 		</button>  
+	</div>
+</div>

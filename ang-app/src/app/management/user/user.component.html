@@ -1,0 +1,233 @@
+	
+	<form-toolbar [title]="title" [editing]="editing" [searchForm]="searchForm" 
+		          (onSearchFormSubmitEmitter)="onSearchFormSubmit()" (listDataEmitter)="listData()"
+		          (listDataNoCacheEmitter)="listDataNoCache()"
+		          [auditingExclusions]="auditingExclusions"
+		          [enabledAuditList]="['admin_master','admin','system_auditor'].includes(logged.category)"
+		          (auditListEmitter)="auditList()" (normalListEmitter)="normalList()"
+		          [disabledAddNew]="!(['admin_master'].includes(logged.category))
+		                              && !(['admin'].includes(logged.category) && permissions.includes('user_write'))"
+		          (addObjectEmitter)="addObject()">
+	</form-toolbar>
+	
+	<ng-template [ngIf]="editing" [ngIfElse]="listObjects">
+		<section aria-label="cadastro e alteração das pessoas/usuários">
+			<ul class="nav nav-tabs justify-content-start">
+			    <li class="nav-item">
+					<span class="nav-link {{ tab == 0 ? 'active' : '' }}" (click)="setTab(0)">
+			  			Dados Gerais (*)
+			  		</span>
+			    </li>
+			    <li class="nav-item">
+					<span class="nav-link {{ tab == 1 ? 'active' : '' }}" (click)="setTab(1)">
+			  			Permissões de Acesso
+			  		</span>
+			    </li>
+		    </ul>
+			<form [formGroup]="dataForm" (ngSubmit)="onObjectFormSubmit()" class="dataForm">   	
+		        <div *ngIf="tab == 0">
+	            	<div class="field" style="width: 98%;">
+	            		<label for="name">Nome (*)</label><br/>
+	            		<input id="name" type="text" style="width: 100%;" maxlength="30"
+	            		       #sinputName 
+	            		       (change)="adjustInputAlphaNameValueAfterChange('name',sinputName.value,30)"
+	            		       (keyup)="adjustInputAlphaNameValueAfterChange('name',sinputName.value,30)"
+	            		       formControlName="name" class="form-control"/>
+	            	</div>
+	            	<div class="field clear" style="width: 38%;">
+	            		<label for="email">E-mail (**)</label><br/>
+	            		<input id="email" type="email" style="width: 100%;" maxlength="100"
+	            		       #sinputEmail 
+	            		       (change)="adjustInputTextValueAfterChange('email',sinputEmail.value,100)"
+	            		       (keyup)="adjustInputTextValueAfterChange('email',sinputEmail.value,100)"
+	            		       formControlName="email" class="form-control"/>
+	            	</div>
+	            	<div class="field" style="width: 29%;">
+	            		<label for="password">Senha (**)</label><br/>
+	            		<input id="password" type="password" style="width: width: 100%;" maxlength="100"
+	            			   #sinputPassword 
+	            			   (change)="validatePasswordForce(sinputPassword.value)"
+	            			   (keyup)="validatePasswordForce(sinputPassword.value)"
+	            		       formControlName="password" class="form-control"/>
+	            	</div>
+	            	<div class="field" style="width: 30%;">
+	            		<label for="category" title="Categoria/Permissão" 
+	            		aria-label="Categoria/Permissão">Cat./Perm. (*)</label><br/>
+	            		<select id="category" formControlName="category" class="form-control clickable">
+	            			<option *ngFor="let category of categories" 
+	            			        value="{{category.value}}">
+	            			   {{ category.label }}
+	            			</option>
+	            		</select>
+	            	</div>
+	            	<div class="clear"></div>
+	        	</div>
+	        	<div *ngIf="tab == 1">
+	        		<div class="field" style="width: 99%;">
+	            		<div class="fieldset">
+	            			<div *ngIf="null==permissions">
+	            				<div class="alert alert-danger">
+									<i class="fas fa-exclamation-triangle"></i>
+									<span>Selecione uma categoria para a pessoa/usuário, na aba "Dados Gerais".</span>
+								</div>
+								<div class="clear"></div>
+	            			</div>
+	            			<div *ngIf="null!=permissions">
+	            				<div *ngIf="permissions.length == 0">
+		            				<div class="alert alert-info">
+										<i class="fas fa-exclamation-triangle"></i>
+										<span>Nenhuma permissão disponível, para a categoria selecionada.</span>
+									</div>
+									<div class="clear"></div>
+		            			</div>
+	            				<div *ngFor="let permission of permissions" 
+	            				     class="field {{ permission.breakBefore ? 'clear' : ''}}" 
+	            				     style="width: 19em; font-size: .95em;">
+		            		    	<div class="field">
+				            			<input type="checkbox" checked="checked" id="chk_{{permission.value}}"
+				            			       *ngIf="selectedPermissions.includes(permission.value)"
+				            			       (click)="uncheckPermission(permission.value)"
+				            			       [disabled]="null!=permission.dependOf 
+				            			                   && !(selectedPermissions.includes(permission.dependOf))"/>
+				            			<input type="checkbox"  id="chk_{{permission.value}}" 
+				            			       *ngIf="!(selectedPermissions.includes(permission.value))"
+				            			       (click)="checkPermission(permission.value)"
+				            			       [disabled]="null!=permission.dependOf 
+				            			                   && !(selectedPermissions.includes(permission.dependOf))"/>
+				            		</div>
+				            		<div class="field label" style="margin-left: .3em;">
+				            			<label class="clickable {{ null!=permission.dependOf 
+				            			                           && !(selectedPermissions.includes(permission.dependOf)) 
+				            			                              ? 'disabled' : '' }}" 
+				            			       for="chk_{{permission.value}}">{{ permission.label }} (Read)</label>
+				            		</div>
+				            		<div class="clear"></div>
+				            		<div class="field" style="margin-left: 1.5em;">
+				            			<input type="checkbox" checked="checked" id="chk_{{permission.value + '_write'}}"
+				            			       *ngIf="selectedPermissions.includes(permission.value + '_write')"
+				            			       (click)="uncheckPermission(permission.value + '_write')"
+				            			       [disabled]="(null!=permission.dependOf 
+				            			                   && !(selectedPermissions.includes(permission.dependOf)))
+				            			                   || !(selectedPermissions.includes(permission.value))"/>
+				            			<input type="checkbox"  id="chk_{{permission.value + '_write'}}" 
+				            			       *ngIf="!(selectedPermissions.includes(permission.value + '_write'))"
+				            			       (click)="checkPermission(permission.value + '_write')"
+				            			       [disabled]="(null!=permission.dependOf 
+				            			                   && !(selectedPermissions.includes(permission.dependOf)))
+				            			                   || !(selectedPermissions.includes(permission.value))"/>
+				            		</div>
+				            		<div class="field label" style="margin-left: .3em;">
+				            			<label class="clickable {{ (null!=permission.dependOf 
+				            			                           && !(selectedPermissions.includes(permission.dependOf)))
+				            			                           || !(selectedPermissions.includes(permission.value)) 
+				            			                              ? 'disabled' : '' }}" 
+				            			       for="chk_{{permission.value + '_write'}}">+ Write</label>
+				            		</div>
+				            		<div class="clear"></div>
+		            		    </div>
+		            		    <div class="clear"></div>
+	            			</div>
+	            		</div>
+	            		<div class="clear"></div>
+	            	</div>
+	            	<div class="clear"></div>
+	        	</div>
+	            <form-action [validationMessages]="validationMessages" [processValidation]="processValidation"
+	                         (cancelDataEmitter)="cancelData()" [passwordValidationMessage]="passwordValidationMessage"
+	                         [additionalMsgsInfo]="formInfo">
+	            </form-action>
+		    </form>
+	    </section>
+	</ng-template>
+	<div class="clear"></div>
+
+	<ng-template #listObjects>
+		<section aria-label="lista das pessoas/usuários">
+		   <table class="table" *ngIf="objects as listOfObject" mdbTable> 
+		   	 <thead class="black white-text">
+		        <tr>
+		          <th scope="col" style="width: auto;">Nome + E-mail</th>
+		          <th scope="col" style="width: 10em;" title="Categoria/Permissão" 
+	                  aria-label="Categoria/Permissão">Cat./Perm.</th>
+		          <th scope="col" style="width: 11em;" *ngIf="!auditingExclusions">Ações</th>
+		          <th scope="col" style="width: 5em;" *ngIf="auditingExclusions">Ações</th>
+		        </tr>
+		     </thead>
+		     <tbody>
+		        <tr mdbTableCol *ngFor="let user of objects; trackBy: trackById">
+		          <td class="text">{{user.name}} &lt;{{user.email}}&gt;</td>
+		          <td class="text" [innerHtml]="getLabelForKey(categories,user.category)"></td>
+		          <td class="actions">
+		          	<div class="buttons">
+		          		<edit-delete-action [auditingExclusions]="auditingExclusions" [object]="user" [logged]="logged"
+			       		                    [noAction]="!(['admin_master'].includes(logged.category))
+		                                                  && !(['admin'].includes(logged.category) && permissions.includes('user_write'))"
+			       		                    [objectDeleteConfirmation]="objectDeleteConfirmation" 
+			       		                    [objectUnDeleteConfirmation]="objectUnDeleteConfirmation"
+			       		                    [objectDetail]="objectDetail"
+			       		                    (showObjectEmitter)="showObject(user.id,objectDetail)"
+			       		                    [lockUnLock]="true"
+			       		                    (lockEmitter)="lock(user.id)"
+			       		                    (unlockEmitter)="unlock(user.id)"
+						                    (editObjectEmitter)="editObject(user.id)"
+						                    (deleteObjectEmitter)="deleteObject(user.id,objectDeleteConfirmation)"
+						                    (unDeleteObjectEmitter)="unDeleteObject(user.id,objectUnDeleteConfirmation)">
+						</edit-delete-action>
+			       	</div>
+		          </td>
+		        </tr>
+		        <tr>
+		        	<td colspan="3" class="navigationBottom">
+		        		<table-navigator [pages]="pages" [selectedPage]="selectedPage" 
+						                 [previousPageDisabled]="previousPageDisabled" [nextPageDisabled]="nextPageDisabled" 
+						                 [rowsPerPage]="rowsPerPage" [totalPages]="totalPages" [totalRows]="totalRows"
+						                 (previousPageEmitter)="previousPage()" 
+						                 (setPageEmitter)="setPage($event)"
+						                 (nextPageEmitter)="nextPage()">
+						</table-navigator>
+		        	</td>
+		        </tr>
+		      </tbody>
+		    </table>
+	    </section>
+	</ng-template>
+	<div class="clear"></div>
+	
+	<ng-template #selectedObjectTemplate>
+		<tr>
+			<th scope="row" class="text" style="width: 11em;">Nome:</th>
+			<td class="text noBorderRight">{{selectedObject.name}}</td>
+		</tr>
+		<tr>
+			<th scope="row" class="text">E-mail:</th>
+			<td class="text noBorderRight">{{selectedObject.email}}</td>
+		</tr>
+		<tr>
+			<th scope="row" class="text">Categoria/Permissão:</th>
+			<td class="text noBorderRight">{{ getLabelForKey(categories,selectedObject.category)}}</td>
+		</tr>
+		<tr>
+			<th scope="row" class="text">Ativa:</th>
+			<td class="text noBorderRight">{{selectedObject.active ? 'Sim' : 'Não'}}</td>
+		</tr>
+	</ng-template>
+	
+	<ng-template #objectDetail let-modal>
+		<delete-confirmation label="Pessoa / Usuário" [selectedObject]="selectedObject" info="true"
+		                     [templateOutlet]="selectedObjectTemplate" (cancelDataEmitter)="showObject(null,null)">
+		</delete-confirmation>
+	</ng-template>
+	
+	<ng-template #objectDeleteConfirmation let-modal>
+		<delete-confirmation label="Pessoa / Usuário" [selectedObject]="selectedObject"
+		                     [auditingExclusions]="auditingExclusions" [templateOutlet]="selectedObjectTemplate"
+		                     (confirmDeleteObjectEmitter)="confirmDeleteObject($event)" (cancelDataEmitter)="cancelData()">
+		</delete-confirmation>
+	</ng-template>
+	
+	<ng-template #objectUnDeleteConfirmation let-modal>
+		<delete-confirmation label="Pessoa / Usuário" [selectedObject]="selectedObject" redo="true"
+		                     [auditingExclusions]="auditingExclusions" [templateOutlet]="selectedObjectTemplate"
+		                     (confirmDeleteObjectEmitter)="confirmUnDeleteObject($event)" (cancelDataEmitter)="cancelData()">
+		</delete-confirmation>
+	</ng-template>

@@ -1,0 +1,136 @@
+<nav aria-label="navegação e filtros">
+	<form [formGroup]="searchForm" (ngSubmit)="onSearchFormSubmit()" class="searchForm"> 
+		<div class="field">
+	   		<button *ngIf="editing" class="btn btn-primary clickable formHeaderButton" placement="right" 
+	   		        ngbTooltip="Voltar para lista" aria-label="Voltar para lista" type="button" (click)="listData()">
+       			<i class="fas fa-arrow-left"></i>
+       		</button>
+       		<button *ngIf="!editing && backToOrigin" class="btn btn-primary clickable formHeaderButton" placement="right" 
+		   		    ngbTooltip="Voltar para lista de origem" aria-label="Voltar para lista de origem"
+		   		    type="button" (click)="goBackToOrigin()">
+        		<i class="fas fa-arrow-left"></i>
+        	</button>
+	   	</div>
+		<div class="field"><h5><span>{{title}}</span></h5></div>
+	   	<div *ngIf="!editing" style="float: right; margin-right: 0.3em;">
+		   	<div class="field">
+		   		<input class="form-control formHeaderSearchInput" type="search" formControlName="parameterValue"
+		   		       style="width: 9.5em !important;"
+		   		       placeholder="termo p/ busca" aria-label="Campo Pesquisar" />
+		   	</div>
+		   	<div class="field">
+		   		<button class="btn btn-outline-success clickable formHeaderSearchButton"
+		   		        placement="left" aria-label="Botão Pesquisar"
+		   		        ngbTooltip="Pesquisar pelo termo de busca digitado.">
+		   			<i class="fa fa-search"></i> Pesquisar
+		      	</button>
+		   	</div>
+		   	<div class="field" *ngIf="(null != selectOptionsLabel && selectOptionsLabel.trim() != '') 
+		   	                          || (null != selectOptionsLabel2 && selectOptionsLabel2.trim() != '')
+		   	                          || (null != selectOptionsLabel3 && selectOptionsLabel3.trim() != '')
+		   	                          || (null != selectOptionsLabel4 && selectOptionsLabel4.trim() != '')">
+		   		<button class="btn btn-primary clickable formHeaderButton" placement="left" 
+		   		        ngbTooltip="Mais Opções de Filtro" aria-label="Mais Opções de Filtro"
+		   		        *ngIf="!moreFilters" type="button" (click)="moreFilterOptions()"
+		   		        style="width: 3em;">
+		   			<i class="fas fa-plus"></i>
+		   			<i class="fas fa-filter"></i>
+		   		</button>
+		   		<button class="btn btn-primary clickable formHeaderButton" placement="left" 
+		   		        ngbTooltip="Menos Opções de Filtro" aria-label="Menos Opções de Filtro"
+		   		        *ngIf="moreFilters" type="button" (click)="lessFilterOptions()"
+		   		        style="width: 3em;">
+		   			<i class="fas fa-minus"></i>
+		   			<i class="fas fa-filter"></i>
+		   		</button>
+		   	</div>
+		   	<div class="field" *ngIf="useReport">
+		   		<button class="btn btn-primary clickable formHeaderButton" placement="left" 
+		   		        ngbTooltip="Relatórios" aria-label="Relatórios"
+		   		        type="button" (click)="toReport()" [disabled]="auditingExclusions">
+		   			<i class="fas fa-calculator"></i>
+		   		</button>
+		   	</div>
+		   	<div class="field" *ngIf="!hiddeRefresh">
+		   		<button class="btn btn-primary clickable formHeaderButton" placement="left" 
+		   		        ngbTooltip="Forçar Atualizar Lista" aria-label="Forçar Atualizar Lista"
+		   		        type="button" (click)="listDataNoCache()">
+		   			<i class="fas fa-sync-alt"></i>
+		   		</button>
+		   	</div>
+		   	<div class="field" *ngIf="enabledAuditList && !auditingExclusions">
+		   		<button class="btn btn-primary clickable formHeaderButton" placement="left" 
+		   		        ngbTooltip="Desfazer/Confirmar exclusões" aria-label="Desfazer/Confirmar exclusões"
+		   		        type="button" (click)="auditList()">
+		   			<i class="fas fa-recycle"></i>
+		   		</button>
+		   	</div>
+		   	<div class="field" *ngIf="enabledAuditList && auditingExclusions">
+		   		<button class="btn btn-primary clickable formHeaderButton" placement="left" 
+		   		        ngbTooltip="Voltar para lista" aria-label="Voltar para lista"
+		   		        type="button" (click)="normalList()">
+		   			<i class="fas fa-clipboard-list"></i>
+		   		</button>
+		   	</div>
+		   	<div class="field" *ngIf="!hiddeAddNew">
+		   		<button class="btn btn-primary clickable formHeaderButton" placement="left" 
+		   		        ngbTooltip="Adicionar novo(a)" aria-label="Adicionar novo(a)"
+		   		        type="button" (click)="addObject()"
+		   		        [disabled]="auditingExclusions || disabledAddNew">
+		   			<i class="fa fa-plus"></i>
+		   		</button>
+		   	</div>
+		   	<div class="clear"></div>
+	   	</div>
+	   	<div *ngIf="!editing && moreFilters && ((null != selectOptionsLabel && selectOptionsLabel.trim() != '') 
+ 	                  || (null != selectOptionsLabel2 && selectOptionsLabel2.trim() != '')
+ 	                  || (null != selectOptionsLabel3 && selectOptionsLabel3.trim() != '')
+ 	                  || (null != selectOptionsLabel4 && selectOptionsLabel4.trim() != ''))" class="clear moreFilters">
+			<div style="float: right; margin-right: 0.3em;">
+				<div class="field" *ngIf="null != selectOptionsLabel && selectOptionsLabel.trim() != ''">
+	   			    <label for="selectOptions">{{ selectOptionsLabel }}</label>
+		   			<select id="selectOptions" class="form-control formHeaderSearchInput" 
+		   			        #sFilterSelectOptions (change)="filterBySelect(sFilterSelectOptions.value)"
+		   			        style="width: 12em !important; padding: 0;">
+		   				<option *ngFor="let selectOption of selectOptionsValues" value="{{selectOption.value}}">
+						   {{ selectOption.label }}
+						</option>
+		   			</select>
+		   		</div>
+		   		<div class="field" *ngIf="null != selectOptionsLabel2 && selectOptionsLabel2.trim() != ''">
+	   			    <label for="selectOptions2">{{ selectOptionsLabel2 }}</label>
+		   			<select id="selectOptions2" class="form-control formHeaderSearchInput" 
+		   			        #sFilterSelectOptions2 (change)="filterBySelect2(sFilterSelectOptions2.value)"
+		   			        style="width: 12em !important; padding: 0;">
+		   				<option *ngFor="let selectOption2 of selectOptionsValues2" value="{{selectOption2.value}}">
+						   {{ selectOption2.label }}
+						</option>
+		   			</select>
+		   		</div>
+				<div class="field" *ngIf="null != selectOptionsLabel3 && selectOptionsLabel3.trim() != ''">
+	   			    <label for="selectOptions3">{{ selectOptionsLabel3 }}</label>
+		   			<select id="selectOptions3" class="form-control formHeaderSearchInput" 
+		   			        #sFilterSelectOptions3 (change)="filterBySelect3(sFilterSelectOptions3.value)"
+		   			        style="width: 12em !important; padding: 0;">
+		   				<option *ngFor="let selectOption3 of selectOptionsValues3" value="{{selectOption3.value}}">
+						   {{ selectOption3.label }}
+						</option>
+		   			</select>
+		   		</div>
+		   		<div class="field" *ngIf="null != selectOptionsLabel4 && selectOptionsLabel4.trim() != ''">
+	   			    <label for="selectOptions4">{{ selectOptionsLabel4 }}</label>
+		   			<select id="selectOptions4" class="form-control formHeaderSearchInput" 
+		   			        #sFilterSelectOptions4 (change)="filterBySelect4(sFilterSelectOptions4.value)"
+		   			        style="width: 12em !important; padding: 0;">
+		   				<option *ngFor="let selectOption4 of selectOptionsValues4" value="{{selectOption4.value}}">
+						   {{ selectOption4.label }}
+						</option>
+		   			</select>
+		   		</div>
+				<div class="clear"></div>
+			</div>
+			<div class="clear" style="height: .3em;"></div>
+		</div>
+	</form>
+	<div class="clear"></div>
+</nav>

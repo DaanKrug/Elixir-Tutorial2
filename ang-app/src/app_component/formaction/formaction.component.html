@@ -1,0 +1,39 @@
+<div class="clear"></div>
+
+<div *ngIf="null!=passwordValidationMessage" style="margin-top: .3rem;" 
+	 aria-label="informação e mensagens de validação do campo Senha">
+	<div class="alert alert-danger" *ngIf="passwordValidationMessage.code != 200">
+	  	<i class="fas fa-exclamation-triangle"></i>
+	  	<span [innerHtml]="passwordValidationMessage.msg"></span>
+	</div>
+	<div class="alert alert-info" *ngIf="passwordValidationMessage.code == 200">
+	  	<i class="fas fa-exclamation-triangle"></i>
+	  	<span [innerHtml]="passwordValidationMessage.msg"></span>
+	</div>
+	<div class="clear"></div>
+</div>
+
+<div *ngIf="validationMessages && processValidation" style="margin-top: .3rem;"
+	 aria-label="mensagens de validação do formulário">
+	<div *ngFor="let msg of validationMessages" class="alert alert-danger">
+		<i class="fas fa-exclamation-triangle"></i>
+		<span [innerHtml]="msg"></span>
+	</div>
+	<div class="clear"></div>
+</div>
+
+<div class="buttons clear"> 
+	<button class="btn btn-primary clickable" (click)="cancelData()" *ngIf="!noCancel">
+  		<i class="fas fa-ban"></i>
+  		<span style="margin-left: .5em;">Cancelar</span>
+  	</button>
+	<button class="btn btn-primary clickable">
+		<i class="far fa-save"></i>
+		<span style="margin-left: .5em;">{{ null != saveText && saveText != '' ? saveText : 'Salvar' }}</span>
+	</button>  
+</div>
+
+<div class="alert alert-info">
+	<div>* Campos de preenchimento obrigatório.</div>
+    <div *ngFor="let msg2 of additionalMsgsInfo">{{msg2}}</div>
+</div>

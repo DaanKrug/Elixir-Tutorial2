@@ -1,0 +1,42 @@
+<button class="btn btn-primary clickable" type="button" *ngIf="lockUnLock && object.active && !auditingExclusions"
+        placement="left" ngbTooltip="Desativar/Desabilitar" aria-label="Desativar/Desabilitar"
+        (click)="lock(object.id);"
+        [disabled]="logged.id != object.ownerId || noAction"
+        style="width: 1.8rem;">
+	<i class="fas fa-lock-open"></i>
+</button>
+<button class="btn btn-primary clickable" type="button" *ngIf="lockUnLock && !object.active && !auditingExclusions"
+        placement="left" ngbTooltip="Ativar/Habilitar" aria-label="Ativar/Habilitar"
+        (click)="unlock(object.id);"
+        [disabled]="logged.id != object.ownerId || noAction"
+        style="width: 1.8rem;">
+	<i class="fas fa-lock"></i>
+</button>
+<button class="btn btn-primary clickable" type="button" *ngIf="!auditingExclusions && null!=objectDetail"
+  	    placement="left" ngbTooltip="Detalhes" aria-label="Detalhes"
+ 	    (click)="showObject(object.id,objectDetail);"
+  	    style="width: 1.6rem;">
+  		<i class="fa fa-info"></i>
+</button>
+<button class="btn btn-primary clickable" type="button" *ngIf="!auditingExclusions"
+		placement="left" ngbTooltip="Editar" aria-label="Editar"
+	    (click)="editObject(object.id);"
+	    [disabled]="logged.id != object.ownerId || noEdit || noAction">
+	<i class="far fa-edit"></i>
+</button>
+<button class="btn btn-primary clickable" type="button" *ngIf="!auditingExclusions"
+		placement="left" ngbTooltip="Excluir" aria-label="Excluir"
+        (click)="deleteObject(object.id,objectDeleteConfirmation);"
+        [disabled]="logged.id != object.ownerId || noAction">
+	<i class="far fa-trash-alt"></i>
+</button>
+<button class="btn btn-primary clickable" type="button" *ngIf="auditingExclusions"
+		placement="left" ngbTooltip="Desfazer Exclusão" aria-label="Desfazer Exclusão"
+	    (click)="unDeleteObject(object.id,objectUnDeleteConfirmation);">
+	<i class="fas fa-undo-alt"></i>
+</button>
+<button class="btn btn-primary clickable" type="button" *ngIf="auditingExclusions"
+		placement="left" ngbTooltip="Excluir definitivamente" aria-label="Excluir definitivamente"
+        (click)="deleteObject(object.id,objectDeleteConfirmation);">
+	<i class="far fa-trash-alt"></i>
+</button>
