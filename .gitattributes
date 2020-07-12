@@ -1,4 +1,13 @@
 *.css linguist-detectable=false
+*.less linguist-detectable=false
+*.scss linguist-detectable=false
+*.svg linguist-detectable=false
+*.png linguist-detectable=false
+*.eot linguist-detectable=false
+*.ttf linguist-detectable=false
+*.woff linguist-detectable=false
+*.woff2 linguist-detectable=false
+*.txt linguist-detectable=false
 *.js linguist-detectable=false
 *.ts linguist-detectable=false
 *.html linguist-detectable=false
