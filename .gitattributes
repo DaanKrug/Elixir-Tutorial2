@@ -16,5 +16,8 @@
 *.html linguist-detectable=false
 *.sql linguist-detectable=false
 *.sh linguist-detectable=false
+*.exs linguist-detectable=false
+*.eex linguist-detectable=false
+*.lock linguist-detectable=false
+*.md linguist-detectable=false
 *.ex linguist-detectable=true
-*.exs linguist-detectable=true
