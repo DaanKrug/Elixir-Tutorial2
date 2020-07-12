@@ -21,10 +21,11 @@ defmodule ExCipher.BasicController do
 	    end
 	  end
   	  
-      defp validateAccess(ip,accessCategories,token,ownerId,permission) do
+      defp validateAccess(ip,accessCategories,token,ownerId,permission,skipValidateAccess \\false) do
 	    cond do
 	      (!(ownerId > 0) or token == "" or ip == "") -> false
 	      (!AuthorizerUtil.isAuthenticated(ownerId,token,ip)) -> false
+	      (skipValidateAccess) -> true
 	      (!AuthorizerUtil.validateAccess(ownerId,accessCategories,permission)) -> false
 	      true -> true
 	    end
@@ -74,11 +75,12 @@ defmodule ExCipher.BasicController do
 	    object = service.loadById(id)
 	    validation = handler.validateToUpdate(id,object,conn.params)
 	    permission = "#{handler.objectTableName()}_write"
+	    skipValidateAccess = (ownerId == id) and permission == "user_write"
 	    result = cond do
 	      (!(validateAccessByHistoryAccess(ip,handler.objectClassName(),token))) -> systemMessage(429)
-	      (!(validateAccess(ip,handler.accessCategories(),token,ownerId,permission))) -> systemMessage(403)
+	      (!(validateAccess(ip,handler.accessCategories(),token,ownerId,permission,skipValidateAccess))) -> systemMessage(403)
 	      (nil == object) -> systemMessage(412)
-	      (MapUtil.get(object,:ownerId) != ownerId) -> authHandler.unAuthorizedUpdate(ownerId,object,handler.objectClassName())
+	      (!skipValidateAccess and MapUtil.get(object,:ownerId) != ownerId) -> authHandler.unAuthorizedUpdate(ownerId,object,handler.objectClassName())
 	      (MapUtil.get(validation,:code) != 205) -> validation
 	      true -> handler.update(id,object,conn.params)
 	    end

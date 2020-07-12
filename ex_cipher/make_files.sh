@@ -87,15 +87,3 @@
 	shell_exec('sudo chmod 774 make_release.sh');
 	shell_exec('sudo chmod +x make_release.sh');
 ?>
-
-
-
-
-
-
-
-
-
-
-
-

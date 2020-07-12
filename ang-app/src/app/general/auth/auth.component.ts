@@ -290,7 +290,8 @@ export class AuthComponent extends BaseCrudFilterComponent implements OnInit, On
   }
 	
   onChangePasswordFormSubmit(){
-	  this.validationMessages = null;
+	  this.validationMessages = [];
+	  this.processValidation = true;
 	  if(this.canceling){
 		  this.canceling = false;
 		  this.changePasswordForm.reset();

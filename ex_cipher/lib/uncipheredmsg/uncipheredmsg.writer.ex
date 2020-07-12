@@ -21,5 +21,4 @@ defmodule ExCipher.UncipheredMsgWriter do
     end
   end
 
-
 end
