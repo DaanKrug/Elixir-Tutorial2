@@ -8,6 +8,9 @@
 *.woff linguist-detectable=false
 *.woff2 linguist-detectable=false
 *.txt linguist-detectable=false
+*.yml linguist-detectable=false
+*.json linguist-detectable=false
+*.pptx linguist-detectable=false
 *.js linguist-detectable=false
 *.ts linguist-detectable=false
 *.html linguist-detectable=false
