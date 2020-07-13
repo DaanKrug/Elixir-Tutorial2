@@ -2,6 +2,8 @@ This project is a short tutorial to demonstrate how to make
 a Elixir App whithout use of Phoenix Framework.
 You can follow step by step the process of creation of this project
 if you see the "elixir_cloud.pptx" file.
+For more detailed and explained tutorial (PT-BR only) follow steps and instructions 
+at: https://www.skallerten.com.br/skallerten/?blog=12+07+2020+Construindo+Aplicacoes+Web+com+Elixir+Parte+1
 
 This project and the .pptx file was created to be submitted to a
 tecnical conference, because this some things will could be bit
